@@ -18,6 +18,8 @@ app.get('/weather', getWeather);
 
 app.get('/yelp', getYelp);
 
+app.get('/movies', getMovies);
+
 function getLocation(request, response) {
   const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${
     request.query.data
@@ -50,8 +52,20 @@ function getYelp(request, response) {
     .get(url)
     .set('Authorization', `Bearer ${process.env.YELP_API_KEY}`)
     .then(result => {
-      console.log(result.body.businesses[0]);
       response.send(result.body.businesses.map(element => new Yelp(element)));
+    })
+    .catch(error => handleError(error, response));
+}
+
+function getMovies(request, response) {
+  const url = `https://api.themoviedb.org/3/movie/76341?api_key=${
+    process.env.MOVIEDB_API_KEY
+  }&query=${request.query.data.search_query}`;
+  superagent
+    .get(url)
+    .then(result => {
+      console.log(result.body);
+      //response.send(result.body.results.map(element => new Movies(element)));
     })
     .catch(error => handleError(error, response));
 }
@@ -79,6 +93,16 @@ function Yelp(food) {
   this.rating = food.rating;
   this.price = food.price;
   this.image_url = food.image_url;
+}
+
+function Movies(movies) {
+  this.title = movies.title;
+  this.released_on = movies.release_date;
+  this.total_votes = movies.vote_count;
+  this.average_votes = movies.vote_average;
+  this.popularity = movies.popularity;
+  this.image_url = movies.poster_path;
+  this.overview = movies.overview;
 }
 
 // may need to move
