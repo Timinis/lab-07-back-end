@@ -1,0 +1,33 @@
+{
+  "name": "lab-07-back-end",
+  "version": "1.0.0",
+  "description": "lab-07 backend",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Timinis/lab-07-back-end.git"
+  },
+  "keywords": [
+    "back-end",
+    "darksky",
+    "yelp",
+    "api",
+    "moviedb"
+  ],
+  "author": "Timothy Li, Dave Muench",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Timinis/lab-07-back-end/issues"
+  },
+  "homepage": "https://github.com/Timinis/lab-07-back-end#readme",
+  "dependencies": {
+    "cors": "^2.8.4",
+    "dotenv": "^6.0.0",
+    "express": "^4.16.3",
+    "superagent": "^4.0.0-beta.5"
+  }
+}
