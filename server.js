@@ -16,6 +16,8 @@ app.get('/location', getLocation);
 
 app.get('/weather', getWeather);
 
+app.get('/yelp', getYelp);
+
 function getLocation(request, response) {
   const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${
     request.query.data
@@ -40,6 +42,20 @@ function getWeather(request, response) {
     .catch(error => handleError(error, response));
 }
 
+function getYelp(request, response) {
+  const url = `https://api.yelp.com/v3/businesses/search?location=${
+    request.query.data.search_query
+  }`;
+  superagent
+    .get(url)
+    .set('Authorization', `Bearer ${process.env.YELP_API_KEY}`)
+    .then(result => {
+      console.log(result.body.businesses[0]);
+      response.send(result.body.businesses.map(element => new Yelp(element)));
+    })
+    .catch(error => handleError(error, response));
+}
+
 function handleError(err, res) {
   console.error(err);
   if (res) res.status(500).send('Sorry, something went wrong');
@@ -56,5 +72,14 @@ function Location(req, result) {
   this.latitude = result.body.results[0].geometry.location.lat;
   this.longitude = result.body.results[0].geometry.location.lng;
 }
+
+function Yelp(food) {
+  this.url = food.url;
+  this.name = food.name;
+  this.rating = food.rating;
+  this.price = food.price;
+  this.image_url = food.image_url;
+}
+
 // may need to move
 app.listen(PORT, () => console.log(`Listening on ${PORT}`));
