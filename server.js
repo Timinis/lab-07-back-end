@@ -1,7 +1,6 @@
 'use strict';
 
-// Required dependencies
-
+// Require dependencies
 const express = require('express');
 const superagent = require('superagent');
 const cors = require('cors');
@@ -13,20 +12,7 @@ require('dotenv').config();
 
 const PORT = process.env.PORT;
 
-app.get('/location', getLocation);
-
-app.get('/weather', getWeather);
-
-app.get('/yelp', getYelp);
-
-app.get('/movies', getMovies);
-
-//Object Creators to organize data
-
-const weatherCreator = day => ({
-  time: new Date(day.time * 1000).toString().slice(0, 15),
-  forecast: day.summary
-});
+//Object Creators to send to front-end
 
 const locationCreator = (req, result) => ({
   search_query: req.query.data,
@@ -35,25 +21,30 @@ const locationCreator = (req, result) => ({
   longitude: result.body.results[0].geometry.location.lng
 });
 
+const weatherCreator = day => ({
+  forecast: day.summary,
+  time: new Date(day.time * 1000).toString().slice(0, 15)
+});
+
 const yelpCreator = food => ({
-  url: food.url,
   name: food.name,
-  rating: food.rating,
+  image_url: food.image_url,
   price: food.price,
-  image_url: food.image_url
+  rating: food.rating,
+  url: food.url
 });
 
 const moviesCreator = movies => ({
   title: movies.title,
-  released_on: movies.release_date,
-  total_votes: movies.vote_count,
+  overview: movies.overview,
   average_votes: movies.vote_average,
-  popularity: movies.popularity,
+  total_votes: movies.vote_count,
   image_url: movies.poster_path,
-  overview: movies.overview
+  popularity: movies.popularity,
+  released_on: movies.release_date
 });
 
-//Function to grab API, load and display
+//The function to call upon request
 
 const getLocation = (request, response) => {
   const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${
@@ -109,12 +100,21 @@ const getMovies = (request, response) => {
     .catch(error => handleError(error, response));
 };
 
-//Function to display Errors
-
 const handleError = (err, res) => {
   console.error(err);
   if (res) res.status(500).send('Sorry, something went wrong');
 };
 
-//calling the whole thing
+//Use the add listener
+
+app.get('/location', getLocation);
+
+app.get('/weather', getWeather);
+
+app.get('/yelp', getYelp);
+
+app.get('/movies', getMovies);
+
+//Waiting on Port
+
 app.listen(PORT, () => console.log(`Listening on ${PORT}`));
