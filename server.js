@@ -58,14 +58,13 @@ function getYelp(request, response) {
 }
 
 function getMovies(request, response) {
-  const url = `https://api.themoviedb.org/3/movie/76341?api_key=${
+  const url = `https://api.themoviedb.org/3/search/movie/?api_key=${
     process.env.MOVIEDB_API_KEY
-  }&query=${request.query.data.search_query}`;
+  }&language=en-US&page=1&query=${request.query.data.search_query}`;
   superagent
     .get(url)
     .then(result => {
-      console.log(result.body);
-      //response.send(result.body.results.map(element => new Movies(element)));
+      response.send(result.body.results.map(element => new Movies(element)));
     })
     .catch(error => handleError(error, response));
 }
