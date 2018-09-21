@@ -73,9 +73,9 @@ const lookupLocation = location => {
 
 //Function to send back sql result if data is not outdated
 
-//const returnCache = result => {
-//response.send(result);
-//};
+const returnCache = result => {
+  response.send(result);
+};
 
 //Function to store cache
 
@@ -87,10 +87,13 @@ const saveToLocation = location => {
     location.latitude,
     location.longitude
   ];
-  return client.query(SQL, values).then(result => {
-    location.id = result.rows[0].id;
-    return location;
-  });
+  return client
+    .query(SQL, values)
+    .then(result => {
+      location.id = result.rows[0].id;
+      return location;
+    })
+    .catch(console.error);
 };
 
 //The function to call API display it and store it
